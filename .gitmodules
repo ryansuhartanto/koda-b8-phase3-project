@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/ryansuhartanto/koda-b8-phase3-backend
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/ryansuhartanto/koda-b8-phase3-frontend
