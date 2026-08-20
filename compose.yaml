@@ -1,0 +1,65 @@
+name: phase3
+
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: ${PGDATABASE}
+    volumes:
+      - postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} -d ${PGDATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build:
+      context: .
+      dockerfile: build/backend.Dockerfile
+    image: phase3-api
+    command: ["bun", "run", "db", "--", "migration", "run"]
+    restart: "no"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGDATABASE: ${PGDATABASE}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    image: phase3-api
+    environment:
+      API_PORT: 3001
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGDATABASE: ${PGDATABASE}
+      JWT_SECRET: ${JWT_SECRET}
+      LINK_KEY: ${LINK_KEY}
+    ports:
+      - "${API_PORT}:3001"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: .
+      dockerfile: build/frontend.Dockerfile
+      args:
+        VITE_API_URL: http://localhost:${API_PORT}
+        VITE_BASE_URL: http://localhost:${WEB_PORT}
+    ports:
+      - "${WEB_PORT}:3002"
+    depends_on:
+      - api
+
+volumes:
+  postgres:
