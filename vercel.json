@@ -8,6 +8,7 @@
 		"backend": {
 			"root": "backend/",
 			"framework": "express",
+			"buildCommand": "bun run build",
 			"entrypoint": "dist/app.mjs"
 		}
 	},
