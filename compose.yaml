@@ -18,7 +18,7 @@ services:
   migrate:
     build:
       context: .
-      dockerfile: build/backend.Dockerfile
+      dockerfile: build/backend/Dockerfile
     image: phase3-api
     command: ["bun", "run", "db", "--", "migration", "run"]
     restart: "no"
@@ -52,7 +52,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: build/frontend.Dockerfile
+      dockerfile: build/frontend/Dockerfile
       args:
         VITE_API_URL: http://localhost:${API_PORT}
         VITE_BASE_URL: http://localhost:${WEB_PORT}
