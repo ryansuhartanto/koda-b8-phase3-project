@@ -20,7 +20,10 @@ git clone --recurse-submodules https://github.com/ryansuhartanto/koda-b8-phase3-
 cd koda-b8-phase3-project
 ```
 
-Already cloned without submodules:
+**`--recurse-submodules` is not optional.** `backend/` and `frontend/` are submodules;
+without it both directories come down empty.
+
+Already cloned without it:
 
 ```sh
 git submodule update --init --recursive
